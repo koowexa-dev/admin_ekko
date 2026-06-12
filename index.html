@@ -2,416 +2,200 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Lavandería EKO | Sistema Administrativo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Lavandería EKO - Generador de órdenes</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: system-ui, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
-            background: #eef2f7;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #eef2f5;
+            padding: 12px;
         }
 
-        /* Contenedor principal */
-        .dashboard-container {
-            max-width: 800px;
-            width: 100%;
+        .app {
+            max-width: 950px;
             margin: 0 auto;
         }
 
-        /* Tarjeta de acceso / botón principal */
-        .access-card {
+        .card {
             background: white;
-            border-radius: 32px;
-            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.15);
-            padding: 32px 24px;
-            text-align: center;
-            transition: transform 0.2s ease;
-        }
-
-        .access-card h1 {
-            font-size: 2rem;
-            color: #1e3c5c;
-            margin-bottom: 8px;
-            letter-spacing: -0.3px;
-        }
-
-        .access-card p {
-            color: #4a627a;
-            margin-bottom: 24px;
-        }
-
-        .btn-admin-access {
-            background: #2c6e9e;
-            border: none;
-            color: white;
-            padding: 14px 28px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            border-radius: 60px;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 260px;
-        }
-
-        .btn-admin-access:active { transform: scale(0.97); background: #1e4e72; }
-
-        /* MODALES */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(6px);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        .modal-content {
-            background: #ffffff;
-            max-width: 780px;
-            width: 100%;
-            border-radius: 32px;
-            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.3);
-            animation: fadeSlideUp 0.25s ease-out;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            max-height: 90vh;
-        }
-
-        @keyframes fadeSlideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 18px 24px;
-            background: #f8fafc;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .modal-header h2 {
-            font-size: 1.5rem;
-            color: #0f2b3d;
-        }
-
-        .close-modal {
-            background: none;
-            border: none;
-            font-size: 28px;
-            cursor: pointer;
-            color: #5e6f8d;
-            width: 40px;
-            height: 40px;
-            border-radius: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.2s;
-        }
-
-        .close-modal:active { background: #e2e8f0; }
-
-        .modal-body {
-            padding: 20px 24px;
-            overflow-y: auto;
-            flex: 1;
-        }
-
-        /* Formulario estilos (moderno) */
-        .admin-section {
-            background: #fefefe;
-            border-radius: 24px;
-            padding: 18px;
-            margin-bottom: 20px;
+            border-radius: 20px;
+            padding: 18px 16px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            border: 1px solid #eef2f6;
+            border: 1px solid #e2e8f0;
         }
 
-        .admin-section h4 {
-            font-size: 1.2rem;
+        .card h1 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: #0f2b3d;
+            margin-bottom: 2px;
+        }
+
+        .card .sub {
+            font-size: 0.8rem;
+            color: #2c3e50;
+            margin-bottom: 18px;
+            border-left: 3px solid #2c6e9e;
+            padding-left: 10px;
+        }
+
+        .section {
+            background: #fff;
+            border: 1px solid #e9edf2;
+            border-radius: 14px;
+            padding: 12px 14px;
+            margin-bottom: 16px;
+        }
+
+        .section h4 {
+            font-size: 0.95rem;
             font-weight: 600;
             color: #1e4663;
-            margin-bottom: 16px;
-            border-left: 4px solid #2c6e9e;
-            padding-left: 12px;
+            margin-bottom: 10px;
+            letter-spacing: -0.2px;
         }
 
-        .admin-grid {
+        .grid-2 {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-            gap: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 10px;
         }
 
-        .form-group {
+        .field {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 4px;
         }
 
-        .form-group label {
-            font-weight: 500;
-            font-size: 0.85rem;
-            color: #2c3e50;
+        .field label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #334155;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
 
         input, select, textarea {
-            padding: 12px 14px;
-            border: 1.5px solid #e2edf2;
-            border-radius: 18px;
-            font-size: 0.95rem;
-            transition: 0.2s;
+            padding: 8px 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            font-size: 0.85rem;
             background: white;
             font-family: inherit;
+        }
+
+        textarea {
+            resize: vertical;
         }
 
         input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: #2c6e9e;
-            box-shadow: 0 0 0 3px rgba(44,110,158,0.2);
+            box-shadow: 0 0 0 2px rgba(44,110,158,0.1);
         }
 
-        .checkbox-group {
+        .check-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 18px;
-            margin-top: 10px;
-            align-items: center;
-        }
-
-        .checkbox-group label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: normal;
-            cursor: pointer;
-        }
-
-        .totales-grid {
-            background: #eef3fa;
-            padding: 16px;
-            border-radius: 24px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px,1fr));
             gap: 12px;
-            margin-bottom: 16px;
+            margin-top: 6px;
+        }
+        .check-row label {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8rem;
+            font-weight: normal;
+            background: #f8fafc;
+            padding: 4px 10px;
+            border-radius: 30px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .totales {
+            background: #f1f5f9;
+            border-radius: 14px;
+            padding: 10px 12px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 8px;
+            margin-bottom: 12px;
+            font-size: 0.8rem;
             font-weight: 500;
         }
 
-        .modal-buttons {
+        .actions {
             display: flex;
             flex-wrap: wrap;
             justify-content: flex-end;
             gap: 12px;
-            margin-top: 24px;
+            margin-top: 18px;
         }
-
-        .btn-modal {
-            background: #eef2f9;
-            border: none;
-            padding: 12px 22px;
+        button {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 8px 20px;
             border-radius: 40px;
-            font-weight: 600;
+            font-size: 0.85rem;
+            font-weight: 500;
             cursor: pointer;
-            transition: 0.15s;
-            font-size: 0.9rem;
+            transition: 0.05s linear;
         }
-
-        .btn-modal.btn-enviar {
+        button.primary {
             background: #2c6e9e;
             color: white;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        }
-
-        .btn-modal:active { transform: scale(0.96); opacity: 0.9; }
-
-        /* historial items */
-        .historial-item {
-            background: #ffffff;
-            border-radius: 20px;
-            margin-bottom: 12px;
-            padding: 14px;
-            border: 1px solid #e9edf2;
-            transition: 0.1s;
-        }
-
-        .historial-item button {
-            margin-top: 10px;
-            margin-right: 8px;
-            padding: 8px 18px;
-            border-radius: 40px;
             border: none;
-            font-weight: 500;
-            background: #eef2fa;
         }
 
-        /* toast flotante */
-        #eko-toast {
+        .toast {
             position: fixed;
-            bottom: 30px;
+            bottom: 20px;
             left: 20px;
             right: 20px;
-            background: #1f2937e6;
-            backdrop-filter: blur(10px);
+            background: #1e293b;
             color: white;
-            padding: 12px 20px;
-            border-radius: 60px;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 0.8rem;
             text-align: center;
-            font-size: 0.9rem;
             z-index: 3000;
-            transition: opacity 0.2s;
             pointer-events: none;
-            max-width: 360px;
-            margin: 0 auto;
             width: fit-content;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            max-width: 300px;
+            margin: 0 auto;
+            opacity: 0;
+            visibility: hidden;
         }
-
-        /* Responsive */
-        @media (max-width: 640px) {
-            .modal-body { padding: 16px; }
-            .admin-section { padding: 14px; }
-            .checkbox-group { gap: 12px; }
-            .btn-modal { padding: 10px 16px; }
-        }
-
-        footer {
-            margin-top: 24px;
-            text-align: center;
-            font-size: 0.75rem;
-            color: #5c6f87;
+        @media (max-width: 560px) {
+            .card { padding: 14px; }
+            .section { padding: 10px; }
+            .grid-2 { gap: 8px; }
         }
     </style>
 </head>
 <body>
-
-<div class="dashboard-container">
-    <div class="access-card">
+<div class="app">
+    <div class="card">
         <h1>Lavandería EKO</h1>
-        <p>Control de órdenes</p>
-        <button class="btn-admin-access" id="openAdminAccessBtn">Solo Administrador</button>
-    </div>
-    <footer>Genera órdenes · Descarga TXT</footer>
-</div>
-
-<!-- MODAL CLAVE -->
-<div id="claveModal" class="modal">
-    <div class="modal-content" style="max-width: 380px;">
-        <div class="modal-header">
-            <h2>Verificación</h2>
-            <button class="close-modal" data-modal="claveModal">&times;</button>
-        </div>
-        <div class="modal-body">
-            <p style="margin-bottom: 20px;">Ingresa la clave de administrador</p>
-            <input type="password" id="claveAcceso" placeholder="Contraseña" style="width:100%; margin-bottom: 20px;" autocomplete="off">
-            <button id="validarClaveBtn" class="btn-modal btn-enviar" style="width:100%">Acceder al panel</button>
+        <div class="sub">Generador de orden de servicio</div>
+        <div id="formRoot"></div>
+        <div class="actions">
+            <button id="previewBtn">Previsualizar TXT</button>
+            <button id="downloadBtn" class="primary">Descargar TXT</button>
         </div>
     </div>
 </div>
-
-<!-- MODAL ADMIN (formulario principal) -->
-<div id="adminModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>📋 Panel de órdenes</h2>
-            <button class="close-modal" data-modal="adminModal">&times;</button>
-        </div>
-        <div class="modal-body">
-            <div id="adminForm"></div>
-            <div style="display: flex; justify-content: space-between; margin-top: 20px; gap: 10px; flex-wrap: wrap;">
-                <button id="verHistorialBtn" class="btn-modal" type="button">📜 Historial</button>
-                <button id="limpiarHistorialBtn" class="btn-modal" type="button">🗑️ Limpiar historial</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- MODAL HISTORIAL -->
-<div id="historialModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>📚 Historial de órdenes</h2>
-            <button class="close-modal" data-modal="historialModal">&times;</button>
-        </div>
-        <div class="modal-body" id="historialContainer">
-            <!-- contenido dinámico -->
-        </div>
-    </div>
-</div>
-
-<div id="eko-toast" style="opacity:0; visibility:hidden;">Mensaje</div>
+<div id="globalToast" class="toast">Mensaje</div>
 
 <script>
-    // --------------------- FUNCIONES GLOBALES (UI / TOAST / MODALES) ---------------------
-    function showToast(msg, isError = false) {
-        const toastEl = document.getElementById('eko-toast');
-        if (!toastEl) return;
-        toastEl.textContent = msg;
-        toastEl.style.backgroundColor = isError ? '#c0392be6' : '#1f2937e6';
-        toastEl.style.visibility = 'visible';
-        toastEl.style.opacity = '1';
-        setTimeout(() => {
-            toastEl.style.opacity = '0';
-            setTimeout(() => { toastEl.style.visibility = 'hidden'; }, 300);
-        }, 2800);
-    }
-
-    window.abrirModal = function(modalElement) {
-        if (modalElement) modalElement.style.display = 'flex';
-    };
-    window.cerrarModal = function(modalElement) {
-        if (modalElement) modalElement.style.display = 'none';
-    };
-
-    // Cerrar con botones .close-modal
-    document.querySelectorAll('.close-modal').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const modalId = btn.getAttribute('data-modal');
-            if (modalId) {
-                const modal = document.getElementById(modalId);
-                if (modal) window.cerrarModal(modal);
-            }
-        });
-    });
-
-    // Abrir acceso admin
-    document.getElementById('openAdminAccessBtn')?.addEventListener('click', () => {
-        const modal = document.getElementById('claveModal');
-        if (modal) window.abrirModal(modal);
-    });
-
-    // ===================== CÓDIGO ORIGINAL ADMIN.JS ADAPTADO =====================
-    (function() {
-        const ADMIN_PASSWORD = 'eko76**lavan';
-        const MAX_ATTEMPTS = 3;
-        const BLOCK_TIME = 30000;
-        let adminAttempts = 0;
-        let blockedUntil = 0;
-        let autoSaveInterval = null;
-        
+    (function(){
+        // ---------- PRECIOS ----------
         const PRECIOS_SERVICIO = {
             '1-2': { Economico: 400, Basico: 700, Premium: 800, Especial: 900 },
             '3-4': { Economico: 500, Basico: 900, Premium: 1000, Especial: 1100 },
@@ -419,231 +203,290 @@
             '7': { Economico: 700, Basico: 1300, Premium: 1400, Especial: 1500 }
         };
         const COSTO_MENSAJERIA = { 'Zona Corta $600': 600, 'Zona Media $900': 900, 'Zona Larga $1200': 1200 };
-        const ZONAS_KEYWORDS = { 'corta': 'Zona Corta $600', 'media': 'Zona Media $900', 'larga': 'Zona Larga $1200', 'centro': 'Zona Corta $600', 'sur': 'Zona Media $900', 'norte': 'Zona Larga $1200' };
+        const ZONA_KEYWORDS = { 'corta': 'Zona Corta $600', 'media': 'Zona Media $900', 'larga': 'Zona Larga $1200', 'centro': 'Zona Corta $600', 'sur': 'Zona Media $900', 'norte': 'Zona Larga $1200' };
         
-        // Referencias modales
-        const claveModal = document.getElementById('claveModal');
-        const adminModal = document.getElementById('adminModal');
-        const validarBtn = document.getElementById('validarClaveBtn');
-        const verHistorialBtn = document.getElementById('verHistorialBtn');
-        const historialModal = document.getElementById('historialModal');
-        const limpiarHistorialBtn = document.getElementById('limpiarHistorialBtn');
-
-        // Helpers
-        function getVal(id, def = '') { const el = document.getElementById(id); if (!el) return def; if (el.tagName === 'SELECT' || el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') return el.value.trim() || def; return def; }
-        function getCheckboxVal(id) { const el = document.getElementById(id); return el ? el.checked : false; }
-        function setVal(id, val) { const el = document.getElementById(id); if (el) el.value = val; }
-        function generarNumeroOrden() { const now = new Date(); const fecha = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}`; const random = Math.random().toString(36).substring(2, 6).toUpperCase(); return `${fecha}-${random}`; }
-        function obtenerHistorialCompleto() { const guardado = localStorage.getItem('eko_ordenes_historial'); return guardado ? JSON.parse(guardado) : []; }
+        // helpers DOM
+        const $ = (id) => document.getElementById(id);
+        const getVal = (id, def='') => { let e = $(id); return e ? (e.value||'').trim()||def : def; };
+        const getChecked = (id) => { let e = $(id); return e ? e.checked : false; };
+        const setVal = (id, val) => { let e = $(id); if(e) e.value = val; };
         
-        function guardarOrdenEnHistorial(ordenData) {
-            try {
-                const ordenParaGuardar = JSON.parse(JSON.stringify(ordenData));
-                if (!ordenParaGuardar.fechaRegistro) ordenParaGuardar.fechaRegistro = new Date().toISOString();
-                const historial = obtenerHistorialCompleto();
-                historial.unshift(ordenParaGuardar);
-                localStorage.setItem('eko_ordenes_historial', JSON.stringify(historial));
-                showToast('✅ Orden guardada en historial');
-                if (historialModal && historialModal.style.display === 'flex') mostrarHistorial();
-                return true;
-            } catch (error) { showToast('Error al guardar: ' + error.message, true); return false; }
+        function generarNumeroOrden() {
+            let d = new Date();
+            let y = d.getFullYear();
+            let m = (d.getMonth()+1).toString().padStart(2,'0');
+            let day = d.getDate().toString().padStart(2,'0');
+            let r = Math.random().toString(36).substring(2,6).toUpperCase();
+            return `${y}${m}${day}-${r}`;
         }
         
-        function eliminarOrdenDelHistorial(index) {
-            try {
-                const historial = obtenerHistorialCompleto();
-                if (index >= 0 && index < historial.length) {
-                    historial.splice(index, 1);
-                    localStorage.setItem('eko_ordenes_historial', JSON.stringify(historial));
-                    showToast('Orden eliminada');
-                    mostrarHistorial();
-                } else showToast('Índice inválido', true);
-            } catch (e) { showToast('Error al eliminar', true); }
+        // Cálculos financieros
+        function calcService() { let w = getVal('weightRange','1-2'); let t = getVal('serviceType','Economico'); return PRECIOS_SERVICIO[w]?.[t] || 0; }
+        function calcExtras() { let total=0; if(getChecked('extraColor')) total+=300; if(getChecked('extraBlanca')) total+=300; if(getChecked('extraOscura')) total+=300; if(getChecked('extraPerfume')) total+=300; if(getChecked('extraPerla')) total+=300; if(getChecked('extraFragancia')) total+=300; return total; }
+        function calcDirt() { let total=0; if(getChecked('ropaSemisucia')) total+=200; if(getChecked('ropaSucia')) total+=400; if(getChecked('ropaManchada')) total+=800; return total; }
+        function calcDelivery() { let z = getVal('zoneSelect','Zona Corta $600'); return COSTO_MENSAJERIA[z] || 0; }
+        
+        function actualizarTotales() {
+            let serv = calcService();
+            let extra = calcExtras();
+            let dirt = calcDirt();
+            let iron = parseFloat(getVal('ironCost','0')) || 0;
+            let delivery = calcDelivery();
+            let total = serv+extra+dirt+iron+delivery;
+            if($('servMount')) $('servMount').innerText = `$${serv}`;
+            if($('extraMount')) $('extraMount').innerText = `$${extra}`;
+            if($('dirtMount')) $('dirtMount').innerText = `$${dirt}`;
+            if($('ironMount')) $('ironMount').innerText = `$${iron}`;
+            if($('deliveryMount')) $('deliveryMount').innerText = `$${delivery}`;
+            if($('totalMount')) $('totalMount').innerText = `$${total}`;
+            let pago = parseFloat(getVal('receivedPay','0')) || 0;
+            let cambio = pago - total;
+            if($('changeMount')) $('changeMount').innerText = cambio>=0 ? `$${cambio}` : `-$${Math.abs(cambio)}`;
+            if($('hiddenTotal')) $('hiddenTotal').value = total;
         }
         
-        function limpiarHistorialCompleto() {
-            if (confirm('⚠️ Eliminar TODO el historial de órdenes permanentemente?')) {
-                localStorage.removeItem('eko_ordenes_historial');
-                showToast('Historial borrado');
-                if (historialModal && historialModal.style.display === 'flex') mostrarHistorial();
+        // Auto sugerencias (solo para mejorar UX, sin guardado)
+        function setupAuto(inputId, fieldKey) {
+            // Función inerte sin historial real, pero mantenemos la estructura básica para sugerencias vacías.
+            // Como ya no hay historial, no se muestran sugerencias. Se deja para no romper nada.
+        }
+        
+        function autoFillClient() {
+            // Sin historial, esta función no hace nada. Se mantiene para evitar errores.
+        }
+        
+        function suggestZoneByAddress() {
+            let addr = getVal('address').toLowerCase();
+            if(!addr) return;
+            for(let [k,zone] of Object.entries(ZONA_KEYWORDS)) {
+                if(addr.includes(k)) { setVal('zoneSelect', zone); actualizarTotales(); break; }
             }
         }
         
-        function cargarOrdenEnFormulario(orden) {
-            setVal('ordenNo', orden.ordenNo || '');
-            setVal('clienteNombre', orden.clienteNombre || '');
-            setVal('adminTelefono', orden.telefono || '');
-            setVal('fechaRecepcion', orden.fechaRecepcion || '');
-            setVal('fechaEntrega', orden.fechaEntrega || '');
-            setVal('adminDireccion', orden.direccion || '');
-            setVal('domicilioZona', orden.zonaMensajeria || 'Zona Corta $600');
-            setVal('pesoRango', orden.pesoRango || '1-2');
-            setVal('tipoServicio', orden.tipoServicio || 'Economico');
-            ['extraColor', 'extraBlanca', 'extraOscura', 'extraPerfume', 'extraPerla', 'extraFragancia'].forEach(ext => { const chk = document.getElementById(ext); if (chk) chk.checked = orden.extras && orden.extras[ext]; });
-            if (orden.ropaManchada) document.getElementById('ropaManchada').checked = true;
-            if (orden.ropaSucia) document.getElementById('ropaSucia').checked = true;
-            if (orden.ropaSemisucia) document.getElementById('ropaSemisucia').checked = true;
-            setVal('prendas', orden.prendas || '');
-            setVal('planchadoTexto', orden.planchadoTexto || '');
-            setVal('costoPlanchado', orden.costoPlanchado || 0);
-            if (document.getElementById('msgRecogida')) document.getElementById('msgRecogida').checked = orden.msgRecogida || false;
-            if (document.getElementById('msgEntrega')) document.getElementById('msgEntrega').checked = orden.msgEntrega || false;
-            setVal('direccionMensajeria', orden.direccionMensajeria || '');
-            setVal('pagoRecibido', orden.pagoRecibido || 0);
-            setVal('firmaEncargado', orden.firmaEncargado || '');
-            setVal('firmaCliente', orden.firmaCliente || '');
-            setVal('piezasTexto', orden.piezasTexto || '');
-            actualizarTotales();
-            showToast('Orden cargada desde historial');
-        }
-        
-        function calcularTotalServicio() { const peso = getVal('pesoRango', '1-2'); const tipo = getVal('tipoServicio', 'Economico'); return PRECIOS_SERVICIO[peso]?.[tipo] || 0; }
-        function calcularExtras() { let total = 0; if (getCheckboxVal('extraColor')) total += 300; if (getCheckboxVal('extraBlanca')) total += 300; if (getCheckboxVal('extraOscura')) total += 300; if (getCheckboxVal('extraPerfume')) total += 300; if (getCheckboxVal('extraPerla')) total += 300; if (getCheckboxVal('extraFragancia')) total += 300; return total; }
-        function calcularEstadoRopa() { let total = 0; if (getCheckboxVal('ropaSemisucia')) total += 200; if (getCheckboxVal('ropaSucia')) total += 400; if (getCheckboxVal('ropaManchada')) total += 800; return total; }
-        function calcularMensajeria() { const zona = getVal('domicilioZona', 'Zona Corta $600'); return COSTO_MENSAJERIA[zona] || 0; }
-        
-        function actualizarTotales() {
-            const servicio = calcularTotalServicio();
-            const extras = calcularExtras();
-            const estadoRopa = calcularEstadoRopa();
-            const planchado = parseFloat(getVal('costoPlanchado', '0')) || 0;
-            const mensajeria = calcularMensajeria();
-            const total = servicio + extras + estadoRopa + planchado + mensajeria;
-            if (document.getElementById('servicioMonto')) document.getElementById('servicioMonto').innerText = `$${servicio}`;
-            if (document.getElementById('extrasMonto')) document.getElementById('extrasMonto').innerText = `$${extras}`;
-            if (document.getElementById('estadoRopaMonto')) document.getElementById('estadoRopaMonto').innerText = `$${estadoRopa}`;
-            if (document.getElementById('planchadoMonto')) document.getElementById('planchadoMonto').innerText = `$${planchado}`;
-            if (document.getElementById('mensajeriaMonto')) document.getElementById('mensajeriaMonto').innerText = `$${mensajeria}`;
-            if (document.getElementById('totalGeneral')) document.getElementById('totalGeneral').innerText = `$${total}`;
-            const pagoTotalInput = document.getElementById('pagoTotal');
-            if (pagoTotalInput) pagoTotalInput.value = total;
-            const recibido = parseFloat(getVal('pagoRecibido', '0')) || 0;
-            const cambio = recibido - total;
-            const cambioSpan = document.getElementById('cambioMonto');
-            if (cambioSpan) cambioSpan.innerText = cambio >= 0 ? `$${cambio}` : `-$${Math.abs(cambio)}`;
-        }
-        
-        function getSugerencias(campo, texto) { if (!texto || texto.length < 2) return []; const historial = obtenerHistorialCompleto(); const valores = historial.map(ord => ord[campo]).filter(v => v && v.toLowerCase().includes(texto.toLowerCase())); return [...new Set(valores)]; }
-        function setupAutocomplete(inputId, campo) { const input = document.getElementById(inputId); if (!input) return; let datalistId = `${inputId}_datalist`; let datalist = document.getElementById(datalistId); if (!datalist) { datalist = document.createElement('datalist'); datalist.id = datalistId; input.setAttribute('list', datalistId); input.parentNode.appendChild(datalist); } input.addEventListener('input', () => { const texto = input.value; const sugerencias = getSugerencias(campo, texto); datalist.innerHTML = ''; sugerencias.forEach(sug => { const option = document.createElement('option'); option.value = sug; datalist.appendChild(option); }); }); }
-        function autoCompletarCliente() { const nombre = getVal('clienteNombre'); if (!nombre) return; const historial = obtenerHistorialCompleto(); const ordenSimilar = historial.find(ord => ord.clienteNombre === nombre); if (ordenSimilar) { if (!getVal('adminTelefono')) setVal('adminTelefono', ordenSimilar.telefono); if (!getVal('adminDireccion')) setVal('adminDireccion', ordenSimilar.direccion); if (!getVal('domicilioZona')) setVal('domicilioZona', ordenSimilar.zonaMensajeria); if (!getVal('firmaCliente')) setVal('firmaCliente', ordenSimilar.firmaCliente); actualizarTotales(); showToast(`Autocompletado: ${nombre}`); } }
-        function sugerirZonaPorDireccion() { const direccion = getVal('adminDireccion').toLowerCase(); if (!direccion) return; for (let [key, zona] of Object.entries(ZONAS_KEYWORDS)) { if (direccion.includes(key)) { setVal('domicilioZona', zona); actualizarTotales(); break; } } }
-        
+        // ---------- GENERACIÓN DE TXT MEJORADA (más limpia y organizada) ----------
         function generarTXT() {
-            const ordenNo = getVal('ordenNo') || generarNumeroOrden();
-            const cliente = getVal('clienteNombre') || '---';
-            const telefono = getVal('adminTelefono') || '---';
-            const fechaRecepcion = getVal('fechaRecepcion') || '---';
-            const fechaEntrega = getVal('fechaEntrega') || '---';
-            const direccion = getVal('adminDireccion') || '---';
-            const zona = getVal('domicilioZona') || '---';
-            const pesoRango = getVal('pesoRango');
-            const tipoServicio = getVal('tipoServicio');
-            const servicioPrecio = calcularTotalServicio();
-            const extrasMap = { 'Ropa COLOR': getCheckboxVal('extraColor'), 'Ropa BLANCA': getCheckboxVal('extraBlanca'), 'Ropa OSCURA': getCheckboxVal('extraOscura'), 'Perfume': getCheckboxVal('extraPerfume'), 'Perla Olor': getCheckboxVal('extraPerla'), 'Fragancia': getCheckboxVal('extraFragancia') };
-            let estadoRopaList = [];
-            if (getCheckboxVal('ropaSemisucia')) estadoRopaList.push('Semisucia (+$200)');
-            if (getCheckboxVal('ropaSucia')) estadoRopaList.push('Sucia (+$400)');
-            if (getCheckboxVal('ropaManchada')) estadoRopaList.push('Manchada (+$800)');
-            const estadoRopaText = estadoRopaList.length ? estadoRopaList.join(', ') : 'Ninguno';
-            const prendas = getVal('prendas') || '';
-            const planchadoTexto = getVal('planchadoTexto') || '';
-            const costoPlanchado = parseFloat(getVal('costoPlanchado', '0')) || 0;
-            const msgRecogida = getCheckboxVal('msgRecogida');
-            const msgEntrega = getCheckboxVal('msgEntrega');
-            const direccionMensajeria = getVal('direccionMensajeria') || '';
-            const extrasMonto = calcularExtras();
-            const estadoMonto = calcularEstadoRopa();
-            const mensajeriaMonto = calcularMensajeria();
-            const total = servicioPrecio + extrasMonto + estadoMonto + costoPlanchado + mensajeriaMonto;
-            const recibido = parseFloat(getVal('pagoRecibido', '0')) || 0;
+            const orden = getVal('ordNum') || generarNumeroOrden();
+            const cliente = getVal('cliName') || '---';
+            const telefono = getVal('cliPhone') || '---';
+            const fechaRec = getVal('recDate') || '---';
+            const fechaEnt = getVal('delDate') || '---';
+            const direccion = getVal('address') || '---';
+            const zona = getVal('zoneSelect') || '---';
+            const peso = getVal('weightRange');
+            const tipo = getVal('serviceType');
+            const costoServ = calcService();
+            
+            // Extras activos (lista legible)
+            const extrasActivos = [];
+            if(getChecked('extraColor')) extrasActivos.push('Ropa COLOR');
+            if(getChecked('extraBlanca')) extrasActivos.push('Ropa BLANCA');
+            if(getChecked('extraOscura')) extrasActivos.push('Ropa OSCURA');
+            if(getChecked('extraPerfume')) extrasActivos.push('Perfume');
+            if(getChecked('extraPerla')) extrasActivos.push('Perla Olor');
+            if(getChecked('extraFragancia')) extrasActivos.push('Fragancia');
+            const extrasTexto = extrasActivos.length ? extrasActivos.join(', ') : 'Ninguno';
+            
+            // Estado de ropa
+            const estadoRopa = [];
+            if(getChecked('ropaSemisucia')) estadoRopa.push('Semisucia (+$200)');
+            if(getChecked('ropaSucia')) estadoRopa.push('Sucia (+$400)');
+            if(getChecked('ropaManchada')) estadoRopa.push('Manchada (+$800)');
+            const estadoTexto = estadoRopa.length ? estadoRopa.join(', ') : 'Ninguno';
+            
+            const prendas = getVal('garments') || '';
+            const planchDesc = getVal('ironDesc') || '';
+            const planchCosto = parseFloat(getVal('ironCost','0')) || 0;
+            const msgRecogida = getChecked('msgPickup');
+            const msgEntrega = getChecked('msgDelivery');
+            const direccionMensajeria = getVal('courierAddr') || '';
+            
+            const extraMonto = calcExtras();
+            const dirtMonto = calcDirt();
+            const deliveryMonto = calcDelivery();
+            const total = costoServ + extraMonto + dirtMonto + planchCosto + deliveryMonto;
+            const recibido = parseFloat(getVal('receivedPay','0')) || 0;
             const cambio = recibido - total;
-            const firmaEncargado = getVal('firmaEncargado') || '______________________________';
-            const firmaCliente = getVal('firmaCliente') || '______________________________';
-            const piezasTexto = getVal('piezasTexto') || '';
-            let txt = 'LAVANDERIA EKO - ORDEN DE SERVICIO\n==================================================\n';
-            txt += `N ORDEN: ${ordenNo}\nCliente: ${cliente} | Teléfono: ${telefono}\nDirección: ${direccion} | Zona: ${zona}\n`;
-            txt += `Fecha Recepción: ${fechaRecepcion} | Fecha Entrega: ${fechaEntrega}\nPeso: ${pesoRango} kg | Tipo: ${tipoServicio} | Costo servicio: $${servicioPrecio}\n`;
-            txt += `Extras activos: ${Object.entries(extrasMap).filter(([k, v]) => v).map(([k]) => k).join(', ') || 'Ninguno'} (Total extras: $${extrasMonto})\n`;
-            txt += `Estado ropa: ${estadoRopaText} (Costo: $${estadoMonto})\nPrendas:\n${prendas}\n`;
-            txt += `Planchado: ${planchadoTexto} | Costo: $${costoPlanchado}\nMensajería: Recogida=${msgRecogida ? 'Sí' : 'No'} Entrega=${msgEntrega ? 'Sí' : 'No'} | Dirección: ${direccionMensajeria} | Costo: $${mensajeriaMonto}\n`;
-            txt += `COBRO:\n  Servicio: $${servicioPrecio} | Extras: $${extrasMonto} | Estado ropa: $${estadoMonto} | Planchado: $${costoPlanchado} | Mensajería: $${mensajeriaMonto}\n`;
-            txt += `  TOTAL: $${total} | Recibido: $${recibido} | Cambio: ${cambio >= 0 ? `$${cambio}` : `Faltan $${Math.abs(cambio)}`}\n`;
-            txt += `Firmas: Cliente: ${firmaCliente} | Encargado: ${firmaEncargado}\nPiezas: ${piezasTexto}\n==================================================\nGenerado por Lavanderia EKO - ${new Date().toLocaleString()}\n`;
+            const firmaEncargado = getVal('signStaff') || '_________________________';
+            const firmaCliente = getVal('signClient') || '_________________________';
+            const piezas = getVal('pieces') || '';
+            
+            // Construcción con formato limpio y secciones
+            let txt = '';
+            txt += '╔══════════════════════════════════════════════════════════════╗\n';
+            txt += '║                 LAVANDERÍA EKO - ORDEN DE SERVICIO           ║\n';
+            txt += '╚══════════════════════════════════════════════════════════════╝\n\n';
+            
+            txt += '┌──────────────────────────────────────────────────────────────┐\n';
+            txt += '│ DATOS DEL CLIENTE                                            │\n';
+            txt += '├──────────────────────────────────────────────────────────────┤\n';
+            txt += `│ N° ORDEN        : ${orden.padEnd(42)}│\n`;
+            txt += `│ CLIENTE         : ${cliente.padEnd(42)}│\n`;
+            txt += `│ TELÉFONO        : ${telefono.padEnd(42)}│\n`;
+            txt += `│ DIRECCIÓN       : ${direccion.padEnd(42)}│\n`;
+            txt += `│ ZONA MENSAJERÍA : ${zona.padEnd(42)}│\n`;
+            txt += `│ FECHA RECEPCIÓN : ${fechaRec.padEnd(42)}│\n`;
+            txt += `│ FECHA ENTREGA   : ${fechaEnt.padEnd(42)}│\n`;
+            txt += '└──────────────────────────────────────────────────────────────┘\n\n';
+            
+            txt += '┌──────────────────────────────────────────────────────────────┐\n';
+            txt += '│ SERVICIO DE LAVANDERÍA                                      │\n';
+            txt += '├──────────────────────────────────────────────────────────────┤\n';
+            txt += `│ PESO            : ${peso.padEnd(42)}│\n`;
+            txt += `│ TIPO            : ${tipo.padEnd(42)}│\n`;
+            txt += `│ COSTO SERVICIO  : $${costoServ.toString().padStart(5)}                                      │\n`;
+            txt += '└──────────────────────────────────────────────────────────────┘\n\n';
+            
+            if(extrasActivos.length > 0 || estadoRopa.length > 0 || planchCosto > 0) {
+                txt += '┌──────────────────────────────────────────────────────────────┐\n';
+                txt += '│ EXTRAS Y ADICIONALES                                        │\n';
+                txt += '├──────────────────────────────────────────────────────────────┤\n';
+                if(extrasActivos.length) txt += `│ EXTRAS         : ${extrasTexto.padEnd(42)}│\n`;
+                txt += `│ MONTO EXTRAS   : $${extraMonto.toString().padStart(5)}                                      │\n`;
+                if(estadoRopa.length) txt += `│ ESTADO ROPA    : ${estadoTexto.padEnd(42)}│\n`;
+                txt += `│ COSTO ESTADO   : $${dirtMonto.toString().padStart(5)}                                      │\n`;
+                if(planchDesc) txt += `│ PLANCHADO      : ${planchDesc.padEnd(42)}│\n`;
+                txt += `│ COSTO PLANCHADO: $${planchCosto.toString().padStart(5)}                                      │\n`;
+                txt += '└──────────────────────────────────────────────────────────────┘\n\n';
+            }
+            
+            if(msgRecogida || msgEntrega || direccionMensajeria) {
+                txt += '┌──────────────────────────────────────────────────────────────┐\n';
+                txt += '│ MENSAJERÍA                                                   │\n';
+                txt += '├──────────────────────────────────────────────────────────────┤\n';
+                txt += `│ RECOGIDA       : ${msgRecogida ? 'SÍ' : 'NO'}.padEnd(42)│\n`;
+                txt += `│ ENTREGA        : ${msgEntrega ? 'SÍ' : 'NO'}.padEnd(42)│\n`;
+                if(direccionMensajeria) txt += `│ DIRECCIÓN ENVÍO: ${direccionMensajeria.padEnd(42)}│\n`;
+                txt += `│ COSTO MENSAJERÍA: $${deliveryMonto.toString().padStart(5)}                                      │\n`;
+                txt += '└──────────────────────────────────────────────────────────────┘\n\n';
+            }
+            
+            if(prendas) {
+                txt += '┌──────────────────────────────────────────────────────────────┐\n';
+                txt += '│ PRENDAS / DETALLE                                           │\n';
+                txt += '├──────────────────────────────────────────────────────────────┤\n';
+                let prendasLines = prendas.split(/\r?\n/);
+                for(let line of prendasLines) {
+                    txt += `│ ${line.padEnd(48)}│\n`;
+                }
+                txt += '└──────────────────────────────────────────────────────────────┘\n\n';
+            }
+            
+            txt += '┌──────────────────────────────────────────────────────────────┐\n';
+            txt += '│ RESUMEN DE COBRO                                             │\n';
+            txt += '├──────────────────────────────────────────────────────────────┤\n';
+            txt += `│ Servicio de lavandería  : $${costoServ.toString().padStart(8)}                              │\n`;
+            txt += `│ Extras                   : $${extraMonto.toString().padStart(8)}                              │\n`;
+            txt += `│ Estado de ropa           : $${dirtMonto.toString().padStart(8)}                              │\n`;
+            txt += `│ Planchado                : $${planchCosto.toString().padStart(8)}                              │\n`;
+            txt += `│ Mensajería               : $${deliveryMonto.toString().padStart(8)}                              │\n`;
+            txt += '├──────────────────────────────────────────────────────────────┤\n';
+            txt += `│ TOTAL A PAGAR            : $${total.toString().padStart(8)}                              │\n`;
+            txt += `│ RECIBIDO                 : $${recibido.toString().padStart(8)}                              │\n`;
+            txt += `│ CAMBIO / FALTA           : ${cambio>=0 ? `$${cambio}` : `-$${Math.abs(cambio)}`}.padStart(32)│\n`;
+            txt += '└──────────────────────────────────────────────────────────────┘\n\n';
+            
+            if(piezas) {
+                txt += '┌──────────────────────────────────────────────────────────────┐\n';
+                txt += '│ OBSERVACIONES / PIEZAS                                      │\n';
+                txt += '├──────────────────────────────────────────────────────────────┤\n';
+                let piezasLines = piezas.split(/\r?\n/);
+                for(let line of piezasLines) {
+                    txt += `│ ${line.padEnd(48)}│\n`;
+                }
+                txt += '└──────────────────────────────────────────────────────────────┘\n\n';
+            }
+            
+            txt += '┌──────────────────────────────────────────────────────────────┐\n';
+            txt += '│ FIRMAS                                                       │\n';
+            txt += '├──────────────────────────────────────────────────────────────┤\n';
+            txt += `│ ENCARGADO     : ${firmaEncargado.padEnd(37)}│\n`;
+            txt += `│ CLIENTE       : ${firmaCliente.padEnd(37)}│\n`;
+            txt += '└──────────────────────────────────────────────────────────────┘\n';
+            txt += `\nDocumento generado el ${new Date().toLocaleString()} | Lavandería EKO\n`;
             return txt;
         }
         
-        function descargarTXT() { const ordenNo = getVal('ordenNo') || generarNumeroOrden(); const txt = generarTXT(); const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `orden_${ordenNo}.txt`; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(a.href); showToast('📄 TXT descargado'); }
-        function previsualizarTXT() { const txt = generarTXT(); const previewModal = document.createElement('div'); previewModal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:10000;display:flex;justify-content:center;align-items:center;'; const content = document.createElement('div'); content.style.cssText = 'background:white;padding:20px;border-radius:24px;max-width:90%;max-height:90%;overflow:auto;width:560px;'; content.innerHTML = `<h3>📄 Previsualización</h3><pre style="white-space:pre-wrap;font-family:monospace;">${txt.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]))}</pre><button id="closePreviewBtn" style="margin-top:16px;padding:10px 18px;border-radius:40px;border:none;background:#2c6e9e;color:white;">Cerrar</button>`; previewModal.appendChild(content); document.body.appendChild(previewModal); document.getElementById('closePreviewBtn').onclick = () => previewModal.remove(); }
-        function guardarBorrador() { const formData = {}; document.querySelectorAll('#adminForm input, #adminForm select, #adminForm textarea').forEach(inp => { if (inp.type === 'checkbox') formData[inp.id] = inp.checked; else if (inp.type === 'radio') { if (inp.checked) formData[inp.name] = inp.value; } else formData[inp.id] = inp.value; }); localStorage.setItem('eko_borrador_formulario', JSON.stringify(formData)); }
-        function cargarBorrador() { const borrador = localStorage.getItem('eko_borrador_formulario'); if (!borrador) return; const data = JSON.parse(borrador); for (let [id, val] of Object.entries(data)) { const el = document.getElementById(id); if (el) { if (el.type === 'checkbox') el.checked = val; else if (el.type === 'radio') { const radio = document.querySelector(`input[name="${id}"][value="${val}"]`); if (radio) radio.checked = true; } else el.value = val; } } actualizarTotales(); showToast('Borrador cargado'); }
-        function limpiarFormulario() { if (confirm('Limpiar todo el formulario actual?')) { document.querySelectorAll('#adminForm input, #adminForm select, #adminForm textarea').forEach(el => { if (el.type === 'checkbox' || el.type === 'radio') el.checked = false; else el.value = ''; }); actualizarTotales(); showToast('Formulario limpio'); } }
+        function descargarTXT() {
+            const txt = generarTXT();
+            const orden = getVal('ordNum') || generarNumeroOrden();
+            const blob = new Blob([txt], {type: 'text/plain;charset=utf-8'});
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `orden_${orden}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(a.href);
+            toastMsg('TXT descargado');
+        }
         
+        function previsualizarTXT() {
+            const txt = generarTXT();
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:10000;display:flex;align-items:center;justify-content:center;';
+            const card = document.createElement('div');
+            card.style.cssText = 'background:white;border-radius:24px;max-width:90%;max-height:85%;overflow:auto;padding:20px;width:700px;';
+            card.innerHTML = `<h3 style="margin-bottom:12px;">Previsualización del TXT</h3><pre style="font-family:monospace;font-size:12px;white-space:pre-wrap;background:#f8fafc;padding:12px;border-radius:12px;">${txt.replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]))}</pre><button id="closePreview" style="margin-top:16px;padding:8px 24px;border-radius:40px;border:none;background:#2c6e9e;color:white;">Cerrar</button>`;
+            modal.appendChild(card);
+            document.body.appendChild(modal);
+            document.getElementById('closePreview').onclick = () => modal.remove();
+        }
+        
+        function toastMsg(msg, isErr=false) {
+            let t = $('globalToast');
+            if(!t) return;
+            t.innerText = msg;
+            t.style.backgroundColor = isErr ? '#b91c1c' : '#1e293b';
+            t.style.visibility = 'visible';
+            t.style.opacity = '1';
+            setTimeout(()=>{
+                t.style.opacity = '0';
+                setTimeout(()=> t.style.visibility = 'hidden', 250);
+            }, 2300);
+        }
+        
+        // Construcción del formulario (sin botones extra, sin autoguardado)
         function construirFormulario() {
-            const adminForm = document.getElementById('adminForm');
-            if (!adminForm) return;
-            adminForm.innerHTML = `<div class="admin-section"><h4>Datos del Cliente</h4><div class="admin-grid"><div class="form-group"><label>N° Orden</label><input type="text" id="ordenNo" placeholder="Auto-generado"></div><div class="form-group"><label>Cliente</label><input type="text" id="clienteNombre" autocomplete="off"></div><div class="form-group"><label>Teléfono</label><input type="tel" id="adminTelefono"></div><div class="form-group"><label>Fecha Recepción</label><input type="date" id="fechaRecepcion"></div><div class="form-group"><label>Fecha Entrega</label><input type="date" id="fechaEntrega"></div><div class="form-group"><label>Dirección</label><input type="text" id="adminDireccion"></div><div class="form-group"><label>Zona mensajería</label><select id="domicilioZona"><option value="Zona Corta $600">Zona Corta ($600)</option><option value="Zona Media $900">Zona Media ($900)</option><option value="Zona Larga $1200">Zona Larga ($1200)</option></select></div></div></div>
-            <div class="admin-section"><h4>Tipo de servicio</h4><div class="admin-grid"><div class="form-group"><label>Peso</label><select id="pesoRango"><option value="1-2">1-2 kg</option><option value="3-4">3-4 kg</option><option value="5-6">5-6 kg</option><option value="7">7 kg</option></select></div><div class="form-group"><label>Tipo</label><select id="tipoServicio"><option value="Economico">Económico</option><option value="Basico">Básico</option><option value="Premium">Premium</option><option value="Especial">Especial</option></select></div></div></div>
-            <div class="admin-section"><h4>Otros lavados</h4><div class="checkbox-group"><label><input type="checkbox" id="extraColor"> Ropa COLOR</label><label><input type="checkbox" id="extraOscura"> Ropa OSCURA</label><label><input type="checkbox" id="extraBlanca"> Ropa BLANCA</label></div></div>
-            <div class="admin-section"><h4>Aromas</h4><div class="checkbox-group"><label><input type="checkbox" id="extraPerla"> Perla Olor</label><label><input type="checkbox" id="extraPerfume"> Perfume</label><label><input type="checkbox" id="extraFragancia"> Fragancia</label></div></div>
-            <div class="admin-section"><h4>Estado de ropa</h4><div class="checkbox-group"><label><input type="checkbox" id="ropaSemisucia"> Semisucia (+$200)</label><label><input type="checkbox" id="ropaSucia"> Sucia (+$400)</label><label><input type="checkbox" id="ropaManchada"> Manchada (+$800)</label></div></div>
-            <div class="admin-section"><h4>Prendas</h4><textarea id="prendas" rows="2" placeholder="Ej: Camisas x3 - 1.5kg"></textarea></div>
-            <div class="admin-section"><h4>Planchado</h4><div class="admin-grid"><div class="form-group"><label>Descripción</label><input type="text" id="planchadoTexto"></div><div class="form-group"><label>Costo ($)</label><input type="number" id="costoPlanchado" value="0" step="100"></div></div></div>
-            <div class="admin-section"><h4>Mensajería</h4><div class="checkbox-group"><label><input type="checkbox" id="msgRecogida"> Recogida</label><label><input type="checkbox" id="msgEntrega"> Entrega</label></div><div class="form-group"><input type="text" id="direccionMensajeria" placeholder="Dirección para mensajería"></div></div>
-            <div class="admin-section"><h4>Cobro</h4><div class="totales-grid"><div>Servicio: <span id="servicioMonto">$0</span></div><div>Extras: <span id="extrasMonto">$0</span></div><div>Estado ropa: <span id="estadoRopaMonto">$0</span></div><div>Planchado: <span id="planchadoMonto">$0</span></div><div>Mensajería: <span id="mensajeriaMonto">$0</span></div><div><strong>TOTAL: <span id="totalGeneral">$0</span></strong></div></div><div class="admin-grid"><div class="form-group"><label>Recibido ($)</label><input type="number" id="pagoRecibido" value="0" step="100"></div><div class="form-group"><label>Cambio</label><span id="cambioMonto">$0</span></div></div><input type="hidden" id="pagoTotal"></div>
-            <div class="admin-section"><h4>Firmas</h4><div class="admin-grid"><div class="form-group"><label>Encargado</label><input type="text" id="firmaEncargado"></div><div class="form-group"><label>Cliente</label><input type="text" id="firmaCliente"></div></div></div>
-            <div class="admin-section"><h4>Piezas</h4><textarea id="piezasTexto" rows="2" placeholder="Detalle adicional"></textarea></div>
-            <div class="modal-buttons"><button type="button" id="guardarHistorialBtn" class="btn-modal">💾 Guardar en historial</button><button type="button" id="previsualizarBtn" class="btn-modal">👁️ Previsualizar TXT</button><button type="button" id="descargarTxtBtn" class="btn-modal btn-enviar">⬇️ Descargar TXT</button><button type="button" id="limpiarFormBtn" class="btn-modal">🧹 Limpiar</button></div>`;
+            const root = $('formRoot');
+            if(!root) return;
+            root.innerHTML = `
+                <div class="section"><h4>Datos del Cliente</h4><div class="grid-2"><div class="field"><label>N° Orden (opcional)</label><input type="text" id="ordNum" placeholder="Auto-generado"></div><div class="field"><label>Cliente</label><input type="text" id="cliName"></div><div class="field"><label>Teléfono</label><input type="tel" id="cliPhone"></div><div class="field"><label>Fecha Recepción</label><input type="date" id="recDate"></div><div class="field"><label>Fecha Entrega</label><input type="date" id="delDate"></div><div class="field"><label>Dirección</label><input type="text" id="address"></div><div class="field"><label>Zona mensajería</label><select id="zoneSelect"><option value="Zona Corta $600">Zona Corta ($600)</option><option value="Zona Media $900">Zona Media ($900)</option><option value="Zona Larga $1200">Zona Larga ($1200)</option></select></div></div></div>
+                <div class="section"><h4>Servicio de Lavandería</h4><div class="grid-2"><div class="field"><label>Peso (kg)</label><select id="weightRange"><option value="1-2">1-2 kg</option><option value="3-4">3-4 kg</option><option value="5-6">5-6 kg</option><option value="7">7 kg</option></select></div><div class="field"><label>Tipo de servicio</label><select id="serviceType"><option value="Economico">Económico</option><option value="Basico">Básico</option><option value="Premium">Premium</option><option value="Especial">Especial</option></select></div></div></div>
+                <div class="section"><h4>Lavados adicionales</h4><div class="check-row"><label><input type="checkbox" id="extraColor"> Ropa Color (+$300)</label><label><input type="checkbox" id="extraBlanca"> Ropa Blanca (+$300)</label><label><input type="checkbox" id="extraOscura"> Ropa Oscura (+$300)</label></div></div>
+                <div class="section"><h4>Aromas</h4><div class="check-row"><label><input type="checkbox" id="extraPerla"> Perla Olor (+$300)</label><label><input type="checkbox" id="extraPerfume"> Perfume (+$300)</label><label><input type="checkbox" id="extraFragancia"> Fragancia (+$300)</label></div></div>
+                <div class="section"><h4>Estado de la ropa</h4><div class="check-row"><label><input type="checkbox" id="ropaSemisucia"> Semisucia (+$200)</label><label><input type="checkbox" id="ropaSucia"> Sucia (+$400)</label><label><input type="checkbox" id="ropaManchada"> Manchada (+$800)</label></div></div>
+                <div class="section"><h4>Prendas / Detalle</h4><textarea id="garments" rows="2" placeholder="Ej: Camisas x3 (1.2 kg), Pantalones x2 (1.5 kg)"></textarea></div>
+                <div class="section"><h4>Planchado</h4><div class="grid-2"><div class="field"><label>Descripción</label><input type="text" id="ironDesc" placeholder="Ej: Camisas, pantalones"></div><div class="field"><label>Costo ($)</label><input type="number" id="ironCost" value="0" step="100"></div></div></div>
+                <div class="section"><h4>Mensajería</h4><div class="check-row"><label><input type="checkbox" id="msgPickup"> Recogida a domicilio</label><label><input type="checkbox" id="msgDelivery"> Entrega a domicilio</label></div><div class="field"><input type="text" id="courierAddr" placeholder="Dirección para mensajería (si aplica)"></div></div>
+                <div class="section"><h4>Resumen de cobro</h4><div class="totales"><div>Servicio: <span id="servMount">$0</span></div><div>Extras: <span id="extraMount">$0</span></div><div>Estado ropa: <span id="dirtMount">$0</span></div><div>Planchado: <span id="ironMount">$0</span></div><div>Mensajería: <span id="deliveryMount">$0</span></div><div><strong>TOTAL: <span id="totalMount">$0</span></strong></div></div><div class="grid-2"><div class="field"><label>Monto recibido ($)</label><input type="number" id="receivedPay" value="0" step="100"></div><div class="field"><label>Cambio / faltante</label><span id="changeMount">$0</span></div></div><input type="hidden" id="hiddenTotal"></div>
+                <div class="section"><h4>Firmas</h4><div class="grid-2"><div class="field"><label>Encargado</label><input type="text" id="signStaff" placeholder="Nombre"></div><div class="field"><label>Cliente</label><input type="text" id="signClient" placeholder="Nombre"></div></div></div>
+                <div class="section"><h4>Observaciones / Piezas especiales</h4><textarea id="pieces" rows="2" placeholder="Detalles adicionales, conteo de piezas, etc."></textarea></div>
+            `;
+            
+            // Fechas por defecto
             const hoy = new Date().toISOString().split('T')[0];
-            const entrega = new Date(Date.now() + 2 * 86400000).toISOString().split('T')[0];
-            if (!getVal('fechaRecepcion')) setVal('fechaRecepcion', hoy);
-            if (!getVal('fechaEntrega')) setVal('fechaEntrega', entrega);
-            setupAutocomplete('clienteNombre', 'clienteNombre');
-            setupAutocomplete('adminDireccion', 'direccion');
-            document.getElementById('clienteNombre')?.addEventListener('blur', autoCompletarCliente);
-            document.getElementById('adminDireccion')?.addEventListener('blur', sugerirZonaPorDireccion);
-            const eventos = ['pesoRango', 'tipoServicio', 'extraColor', 'extraBlanca', 'extraOscura', 'extraPerfume', 'extraPerla', 'extraFragancia', 'ropaSemisucia', 'ropaSucia', 'ropaManchada', 'domicilioZona', 'costoPlanchado', 'pagoRecibido'];
-            eventos.forEach(id => { const el = document.getElementById(id); if (el) el.addEventListener('change', () => { actualizarTotales(); guardarBorrador(); }); });
-            document.getElementById('costoPlanchado')?.addEventListener('input', () => { actualizarTotales(); guardarBorrador(); });
-            document.getElementById('pagoRecibido')?.addEventListener('input', actualizarTotales);
-            document.getElementById('descargarTxtBtn')?.addEventListener('click', descargarTXT);
-            document.getElementById('guardarHistorialBtn')?.addEventListener('click', () => { try { const ordenData = { ordenNo: getVal('ordenNo') || generarNumeroOrden(), clienteNombre: getVal('clienteNombre'), telefono: getVal('adminTelefono'), fechaRecepcion: getVal('fechaRecepcion'), fechaEntrega: getVal('fechaEntrega'), direccion: getVal('adminDireccion'), zonaMensajeria: getVal('domicilioZona'), pesoRango: getVal('pesoRango'), tipoServicio: getVal('tipoServicio'), extras: { extraColor: getCheckboxVal('extraColor'), extraBlanca: getCheckboxVal('extraBlanca'), extraOscura: getCheckboxVal('extraOscura'), extraPerfume: getCheckboxVal('extraPerfume'), extraPerla: getCheckboxVal('extraPerla'), extraFragancia: getCheckboxVal('extraFragancia') }, ropaManchada: getCheckboxVal('ropaManchada'), ropaSucia: getCheckboxVal('ropaSucia'), ropaSemisucia: getCheckboxVal('ropaSemisucia'), prendas: getVal('prendas'), planchadoTexto: getVal('planchadoTexto'), costoPlanchado: parseFloat(getVal('costoPlanchado', '0')), msgRecogida: getCheckboxVal('msgRecogida'), msgEntrega: getCheckboxVal('msgEntrega'), direccionMensajeria: getVal('direccionMensajeria'), pagoRecibido: parseFloat(getVal('pagoRecibido', '0')), firmaEncargado: getVal('firmaEncargado'), firmaCliente: getVal('firmaCliente'), piezasTexto: getVal('piezasTexto') }; guardarOrdenEnHistorial(ordenData); guardarBorrador(); } catch (err) { showToast('Error: ' + err.message, true); } });
-            document.getElementById('previsualizarBtn')?.addEventListener('click', previsualizarTXT);
-            document.getElementById('limpiarFormBtn')?.addEventListener('click', limpiarFormulario);
+            const futuro = new Date(Date.now() + 2*86400000).toISOString().split('T')[0];
+            if(!getVal('recDate')) setVal('recDate', hoy);
+            if(!getVal('delDate')) setVal('delDate', futuro);
+            
+            // Eventos para actualizar totales
+            const eventos = ['weightRange','serviceType','extraColor','extraBlanca','extraOscura','extraPerfume','extraPerla','extraFragancia','ropaSemisucia','ropaSucia','ropaManchada','zoneSelect','ironCost','receivedPay'];
+            eventos.forEach(id => {
+                const el = $(id);
+                if(el) el.addEventListener('change', actualizarTotales);
+            });
+            $('ironCost')?.addEventListener('input', actualizarTotales);
+            $('receivedPay')?.addEventListener('input', actualizarTotales);
+            $('address')?.addEventListener('blur', suggestZoneByAddress);
+            
             actualizarTotales();
-            cargarBorrador();
-            if (autoSaveInterval) clearInterval(autoSaveInterval);
-            autoSaveInterval = setInterval(guardarBorrador, 30000);
         }
         
-        function mostrarHistorial() {
-            const historial = obtenerHistorialCompleto();
-            const container = document.getElementById('historialContainer');
-            if (!container) return;
-            let html = `<h3>📋 Órdenes guardadas</h3><input type="text" id="buscarHistorial" placeholder="Buscar por orden, cliente o teléfono..." style="width:100%; padding:10px; margin-bottom:15px; border-radius:40px;"><div id="listaHistorial"></div>`;
-            container.innerHTML = html;
-            const buscarInput = document.getElementById('buscarHistorial');
-            const listaDiv = document.getElementById('listaHistorial');
-            function renderLista(filtro = '') {
-                const filtrado = historial.filter(ord => ord.ordenNo?.toLowerCase().includes(filtro) || ord.clienteNombre?.toLowerCase().includes(filtro) || ord.telefono?.includes(filtro));
-                if (!filtrado.length) listaDiv.innerHTML = '<p>Sin órdenes coincidentes.</p>';
-                else listaDiv.innerHTML = filtrado.map((ord, idx) => `<div class="historial-item"><strong>#${ord.ordenNo || 'N/A'}</strong> - ${new Date(ord.fechaRegistro).toLocaleString()}<br>Cliente: ${ord.clienteNombre || '?'} | Tel: ${ord.telefono || '?'}<br><button class="btn-cargar" data-idx="${idx}">📂 Cargar</button> <button class="btn-eliminar" data-idx="${idx}">🗑️ Eliminar</button></div>`).join('');
-                document.querySelectorAll('.btn-cargar').forEach(btn => btn.addEventListener('click', (e) => { const idx = btn.getAttribute('data-idx'); cargarOrdenEnFormulario(historial[parseInt(idx)]); window.cerrarModal(historialModal); }));
-                document.querySelectorAll('.btn-eliminar').forEach(btn => btn.addEventListener('click', (e) => { const idx = btn.getAttribute('data-idx'); if (confirm('¿Eliminar orden del historial?')) eliminarOrdenDelHistorial(parseInt(idx)); }));
-            }
-            renderLista();
-            buscarInput.addEventListener('input', () => renderLista(buscarInput.value.toLowerCase()));
-            window.abrirModal(historialModal);
-        }
+        // Botones
+        $('downloadBtn')?.addEventListener('click', descargarTXT);
+        $('previewBtn')?.addEventListener('click', previsualizarTXT);
         
-        // Inicialización eventos y validación
-        function init() {
-            construirFormulario();
-            window.addEventListener('keydown', (e) => { if (e.ctrlKey && e.key === 'g') { e.preventDefault(); document.getElementById('guardarHistorialBtn')?.click(); } if (e.ctrlKey && e.key === 'd') { e.preventDefault(); document.getElementById('descargarTxtBtn')?.click(); } if (e.ctrlKey && e.key === 'l') { e.preventDefault(); document.getElementById('limpiarFormBtn')?.click(); } if (e.ctrlKey && e.key === 'h') { e.preventDefault(); mostrarHistorial(); } });
-            if (validarBtn) validarBtn.addEventListener('click', () => { const ahora = Date.now(); if (ahora < blockedUntil) { showToast(`Bloqueado, espere ${Math.ceil((blockedUntil - ahora) / 1000)}s`, true); return; } const clave = document.getElementById('claveAcceso').value; if (clave === ADMIN_PASSWORD) { adminAttempts = 0; window.cerrarModal(claveModal); window.abrirModal(adminModal); document.getElementById('claveAcceso').value = ''; } else { adminAttempts++; showToast(`Clave incorrecta. Intento ${adminAttempts}/${MAX_ATTEMPTS}`, true); if (adminAttempts >= MAX_ATTEMPTS) { blockedUntil = Date.now() + BLOCK_TIME; adminAttempts = 0; showToast('Demasiados intentos, bloqueado 30s', true); } document.getElementById('claveAcceso').value = ''; } });
-            if (verHistorialBtn) verHistorialBtn.addEventListener('click', mostrarHistorial);
-            if (limpiarHistorialBtn) limpiarHistorialBtn.addEventListener('click', () => limpiarHistorialCompleto());
-        }
-        init();
+        construirFormulario();
     })();
 </script>
 </body>
