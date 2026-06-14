@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>ADMIN EKO</title>
+    <title>ADMIN EKKO - Lavandería</title>
     <style>
+        /* ========== ESTILOS PRINCIPALES ========== */
         * {
             margin: 0;
             padding: 0;
@@ -189,7 +190,7 @@
 <body>
 <div class="app">
     <div class="card">
-        <h1>Lavandería EKO</h1>
+        <h1>Lavandería EKKO</h1>
         <div class="sub">Administración de ordenes del servicio</div>
         <div id="formRoot"></div>
         <div class="actions">
@@ -202,8 +203,11 @@
 
 <script>
     (function(){
-        // ---------- PRECIOS ACTUALIZADOS SEGÚN PÁGINA OFICIAL ----------
-        // Planes normales (por rango de peso)
+        // ========== CONFIGURACIÓN FÁCIL DE EDITAR ==========
+        // ----------------------------------------------------
+        // 1. PRECIOS POR PLAN (NORMALES - rangos de peso)
+        //    Claves: 'NORMAL', 'BASICO', 'PREMIUM', 'ESPECIAL'
+        //    Cada rango: '1-2', '3-4', '5-6', '7'
         const PRECIOS_KG = {
             NORMAL: { '1-2': 400, '3-4': 500, '5-6': 600, '7': 700 },
             BASICO: { '1-2': 700, '3-4': 900, '5-6': 1100, '7': 1300 },
@@ -211,19 +215,31 @@
             ESPECIAL: { '1-2': 900, '3-4': 1100, '5-6': 1300, '7': 1500 }
         };
         
-        // Planes baby (precio fijo por paquete de 5kg)
+        // 2. PLANES BABY (precio fijo por paquete de 5kg)
         const PRECIOS_BABY = {
-            'BABY EKO 1': { nombre: 'BABY EKO 1', peso: '5kg', precioUnitario: 1500 },
-            'BABY EKO 2': { nombre: 'BABY EKO 2', peso: '5kg', precioUnitario: 2000 }
+            'BABY EKKO 1': { nombre: 'BABY EKKO 1', peso: '5kg', precioUnitario: 1500 },
+            'BABY EKKO 2': { nombre: 'BABY EKKO 2', peso: '5kg', precioUnitario: 2000 }
         };
         
-        // Precios de mensajería
-        const COSTO_MENSAJERIA = { 'Zona Corta $600': 600, 'Zona Media $900': 900, 'Zona Larga $1200': 1200 };
-        const ZONA_KEYWORDS = { 'corta': 'Zona Corta $600', 'media': 'Zona Media $900', 'larga': 'Zona Larga $1200', 'centro': 'Zona Corta $600', 'sur': 'Zona Media $900', 'norte': 'Zona Larga $1200' };
+        // 3. MENSAJERÍA (zonas)
+        const COSTO_MENSAJERIA = { 
+            'Zona Corta $600': 600, 
+            'Zona Media $900': 900, 
+            'Zona Larga $1200': 1200 
+        };
+        const ZONA_KEYWORDS = { 
+            'corta': 'Zona Corta $600', 
+            'media': 'Zona Media $900', 
+            'larga': 'Zona Larga $1200', 
+            'centro': 'Zona Corta $600', 
+            'sur': 'Zona Media $900', 
+            'norte': 'Zona Larga $1200' 
+        };
         
-        // Lista completa de extras (según página oficial)
+        // 4. EXTRAS (precios y nombres visibles)
+        //    ¡ATENCIÓN! Se ha ELIMINADO "empaquePremium" por solicitud.
         const PRECIOS_EXTRAS = {
-            // Lavados especiales por color
+            // Lavados por color
             dlrBlanca: 300,
             dlrOscura: 300,
             dlrColor: 300,
@@ -241,11 +257,11 @@
             mantaBebe: 400,
             edredonCuna: 600,
             protectorColchon: 500,
-            // Extras adicionales
-            tratamientoManchas: 300,
-            empaquePremium: 200
+            // Extras adicionales (ya no incluye Empaque Premium)
+            tratamientoManchas: 300
         };
         
+        // Nombres visibles en el formulario (corresponden con las claves de PRECIOS_EXTRAS)
         const EXTRAS_NOMBRES = {
             dlrBlanca: 'D.L.R Blanca',
             dlrOscura: 'D.L.R Oscura',
@@ -261,16 +277,27 @@
             mantaBebe: 'Manta de bebé',
             edredonCuna: 'Edredón de cuna',
             protectorColchon: 'Protector de colchón',
-            tratamientoManchas: 'Tratamiento antimanchas intensivo',
-            empaquePremium: 'Empaque Premium adicional'
+            tratamientoManchas: 'Tratamiento intenso para bebes'
         };
         
-        // helpers DOM
+        // Categorías para organizar los extras en el formulario (fácil modificación)
+        const CATEGORIAS_EXTRAS = {
+            'Lavados por color': ['dlrBlanca', 'dlrOscura', 'dlrColor'],
+            'Aromas': ['fragancia', 'perlas', 'perfume'],
+            'Estado de la ropa': ['semiSucio', 'sucio', 'manchado'],
+            'Peluches y artículos': ['peluchePeq', 'pelucheMed', 'mantaBebe', 'edredonCuna', 'protectorColchon'],
+            'Extras adicionales': ['tratamientoManchas']   // ← Aquí solo queda tratamientoManchas
+        };
+        
+        // ========== FIN DE LA CONFIGURACIÓN FÁCIL ==========
+        
+        // Funciones auxiliares DOM
         const $ = (id) => document.getElementById(id);
         const getVal = (id, def='') => { let e = $(id); return e ? (e.value||'').trim()||def : def; };
         const getChecked = (id) => { let e = $(id); return e ? e.checked : false; };
         const setVal = (id, val) => { let e = $(id); if(e) e.value = val; };
         
+        // Generador de número de orden
         function generarNumeroOrden() {
             let d = new Date();
             let y = d.getFullYear();
@@ -280,33 +307,27 @@
             return `${y}${m}${day}-${r}`;
         }
         
-        // Determinar si el plan seleccionado es baby
         function isBabyPlan() {
             const plan = getVal('serviceType');
-            return plan === 'BABY EKO 1' || plan === 'BABY EKO 2';
+            return plan === 'BABY EKKO 1' || plan === 'BABY EKKO 2';
         }
         
         // Cálculo del servicio base
         function calcService() {
             const plan = getVal('serviceType');
-            
-            // Planes baby
-            if (plan === 'BABY EKO 1') {
+            if (plan === 'BABY EKKO 1') {
                 const cantidad = parseInt(getVal('babyQty', '1')) || 1;
-                return PRECIOS_BABY['BABY EKO 1'].precioUnitario * cantidad;
+                return PRECIOS_BABY['BABY EKKO 1'].precioUnitario * cantidad;
             }
-            if (plan === 'BABY EKO 2') {
+            if (plan === 'BABY EKKO 2') {
                 const cantidad = parseInt(getVal('babyQty', '1')) || 1;
-                return PRECIOS_BABY['BABY EKO 2'].precioUnitario * cantidad;
+                return PRECIOS_BABY['BABY EKKO 2'].precioUnitario * cantidad;
             }
-            
-            // Planes normales
             const peso = getVal('weightRange', '1-2');
             const precioPlan = PRECIOS_KG[plan];
             return precioPlan ? (precioPlan[peso] || 0) : 0;
         }
         
-        // Cálculo de extras
         function calcExtras() {
             let total = 0;
             for (const [extra, precio] of Object.entries(PRECIOS_EXTRAS)) {
@@ -340,7 +361,6 @@
             if($('changeMount')) $('changeMount').innerText = cambio>=0 ? `$${cambio}` : `-$${Math.abs(cambio)}`;
             if($('hiddenTotal')) $('hiddenTotal').value = total;
             
-            // Mostrar/ocultar campo de cantidad para planes baby
             const babyQtyDiv = $('babyQtyDiv');
             if (babyQtyDiv) {
                 if (isBabyPlan()) {
@@ -380,7 +400,7 @@
                 descripcionPlan = `${plan} - ${peso} kg`;
             }
             
-            // Extras activos
+            // Extras activos según configuración actual (sin empaque premium)
             const extrasActivos = [];
             for (const [extra, precio] of Object.entries(PRECIOS_EXTRAS)) {
                 if (getChecked(`extra_${extra}`)) {
@@ -407,7 +427,7 @@
             
             let txt = '';
             txt += '╔══════════════════════════════════════════════════════════════╗\n';
-            txt += '║                 LAVANDERÍA EKO - ORDEN DE SERVICIO           ║\n';
+            txt += '║                 LAVANDERÍA EKKO - ORDEN DE SERVICIO           ║\n';
             txt += '╚══════════════════════════════════════════════════════════════╝\n\n';
             
             txt += '┌──────────────────────────────────────────────────────────────┐\n';
@@ -444,8 +464,8 @@
                 txt += '┌──────────────────────────────────────────────────────────────┐\n';
                 txt += '│ MENSAJERÍA                                                   │\n';
                 txt += '├──────────────────────────────────────────────────────────────┤\n';
-                txt += `│ RECOGIDA       : ${msgRecogida ? 'SÍ' : 'NO'}.padEnd(42)│\n`;
-                txt += `│ ENTREGA        : ${msgEntrega ? 'SÍ' : 'NO'}.padEnd(42)│\n`;
+                txt += `│ RECOGIDA       : ${msgRecogida ? 'SÍ' : 'NO'}                                  │\n`;
+                txt += `│ ENTREGA        : ${msgEntrega ? 'SÍ' : 'NO'}                                  │\n`;
                 if(direccionMensajeria) txt += `│ DIRECCIÓN ENVÍO: ${direccionMensajeria.padEnd(42)}│\n`;
                 txt += `│ COSTO MENSAJERÍA: $${deliveryMonto.toString().padStart(5)}                                      │\n`;
                 txt += '└──────────────────────────────────────────────────────────────┘\n\n';
@@ -472,7 +492,7 @@
             txt += '├──────────────────────────────────────────────────────────────┤\n';
             txt += `│ TOTAL A PAGAR            : $${total.toString().padStart(8)}                              │\n`;
             txt += `│ RECIBIDO                 : $${recibido.toString().padStart(8)}                              │\n`;
-            txt += `│ CAMBIO / FALTA           : ${cambio>=0 ? `$${cambio}` : `-$${Math.abs(cambio)}`}.padStart(32)│\n`;
+            txt += `│ CAMBIO / FALTA           : ${cambio>=0 ? `$${cambio}` : `-$${Math.abs(cambio)}`}                              │\n`;
             txt += '└──────────────────────────────────────────────────────────────┘\n\n';
             
             if(piezas) {
@@ -492,7 +512,7 @@
             txt += `│ ENCARGADO     : ${firmaEncargado.padEnd(37)}│\n`;
             txt += `│ CLIENTE       : ${firmaCliente.padEnd(37)}│\n`;
             txt += '└──────────────────────────────────────────────────────────────┘\n';
-            txt += `\nDocumento generado el ${new Date().toLocaleString()} | Lavandería EKO\n`;
+            txt += `\nDocumento generado el ${new Date().toLocaleString()} | Lavandería EKKO\n`;
             return txt;
         }
         
@@ -535,25 +555,19 @@
             }, 2300);
         }
         
-        // Construcción del formulario
+        // Construcción dinámica del formulario usando la configuración (fácil de editar)
         function construirFormulario() {
             const root = $('formRoot');
             if(!root) return;
             
-            // Construir lista de extras en HTML
+            // Generar HTML de extras según CATEGORIAS_EXTRAS y PRECIOS_EXTRAS
             let extrasHtml = '';
-            const categoriasExtras = {
-                'Lavados por color': ['dlrBlanca', 'dlrOscura', 'dlrColor'],
-                'Aromas': ['fragancia', 'perlas', 'perfume'],
-                'Estado de la ropa': ['semiSucio', 'sucio', 'manchado'],
-                'Peluches y artículos': ['peluchePeq', 'pelucheMed', 'mantaBebe', 'edredonCuna', 'protectorColchon'],
-                'Extras adicionales': ['tratamientoManchas', 'empaquePremium']
-            };
-            
-            for (const [categoria, extras] of Object.entries(categoriasExtras)) {
+            for (const [categoria, listaExtras] of Object.entries(CATEGORIAS_EXTRAS)) {
                 extrasHtml += `<div class="section"><h4>${categoria}</h4><div class="check-row">`;
-                for (const extra of extras) {
-                    extrasHtml += `<label><input type="checkbox" id="extra_${extra}"> ${EXTRAS_NOMBRES[extra]} (+$${PRECIOS_EXTRAS[extra]})</label>`;
+                for (const extra of listaExtras) {
+                    if (PRECIOS_EXTRAS[extra] !== undefined) {
+                        extrasHtml += `<label><input type="checkbox" id="extra_${extra}"> ${EXTRAS_NOMBRES[extra]} (+$${PRECIOS_EXTRAS[extra]})</label>`;
+                    }
                 }
                 extrasHtml += `</div></div>`;
             }
@@ -566,8 +580,8 @@
                     <option value="BASICO">BÁSICO</option>
                     <option value="PREMIUM">PREMIUM</option>
                     <option value="ESPECIAL">ESPECIAL</option>
-                    <option value="BABY EKO 1">BABY EKO 1 (5kg - $1500)</option>
-                    <option value="BABY EKO 2">BABY EKO 2 (5kg - $2000)</option>
+                    <option value="BABY EKKO 1">BABY EKKO 1 (5kg - $1500)</option>
+                    <option value="BABY EKKO 2">BABY EKKO 2 (5kg - $2000)</option>
                 </select></div>
                 <div class="field"><label>Rango de peso (kg)</label><select id="weightRange">
                     <option value="1-2">1-2 kg</option>
@@ -596,7 +610,6 @@
             
             // Eventos para actualizar totales
             const eventos = ['serviceType', 'weightRange', 'babyQty', 'zoneSelect', 'ironCost', 'receivedPay'];
-            // Añadir eventos para todos los extras
             for (const extra of Object.keys(PRECIOS_EXTRAS)) {
                 eventos.push(`extra_${extra}`);
             }
@@ -615,7 +628,7 @@
             actualizarTotales();
         }
         
-        // Botones
+        // Botones principales
         $('downloadBtn')?.addEventListener('click', descargarTXT);
         $('previewBtn')?.addEventListener('click', previsualizarTXT);
         
